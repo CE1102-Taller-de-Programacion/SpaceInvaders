@@ -1,0 +1,22 @@
+{
+  "1": {
+	 "nombre": "James",
+	 "record": 100
+  },
+  "2": {
+    "nombre": "Franchella",
+    "record": 90
+  },
+  "3": {
+    "nombre": "Carlos",
+    "record": 87
+  },
+  "4": {
+    "nombre": "Sarah",
+    "record": 80
+  },
+  "5": {
+    "nombre": "Leroy Jenkins",
+    "record": 74
+  }
+}

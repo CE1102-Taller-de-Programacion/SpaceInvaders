@@ -1,0 +1,5 @@
+Horas de investigación
+ - Aprender UML: 2 horas
+ - Aprender pygame: 5 hora -WIP-
+ - Investigación MVC: 1 hora
+ - Diseño de objetos: 4 horas
