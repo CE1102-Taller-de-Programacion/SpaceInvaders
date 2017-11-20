@@ -1,22 +1,7 @@
 {
-  "1": {
-	 "nombre": "James",
-	 "record": 100
-  },
-  "2": {
-    "nombre": "Franchella",
-    "record": 90
-  },
-  "3": {
-    "nombre": "Carlos",
-    "record": 87
-  },
-  "4": {
-    "nombre": "Sarah",
-    "record": 80
-  },
-  "5": {
-    "nombre": "Leroy Jenkins",
-    "record": 74
-  }
+  "James": {"pos": 1, "puntaje": 100},
+  "Franchella": {"pos": 2, "puntaje":90},
+  "Carlos": {"pos": 3, "puntaje": 87},
+  "Sarah": {"pos": 4, "puntaje": 80},
+  "Leroy Jenkins": {"pos": 5, "puntaje": 74}
 }

@@ -1,10 +1,9 @@
 import pygame
+import threading
+import inputbox
 
 
 class Juego:
-    def __repr__(self):
-        return "Juego con controlador en {}".format(self.controlador)
-
     def __init__(self, controlador, defensor, atacantes):
         self.controlador = controlador
         self.defensor = defensor
@@ -14,6 +13,10 @@ class Juego:
         self.NEGRO = (0, 0, 0)
         self.BLANCO = (255, 255, 255)
         self.ROJO = (237, 74, 60)
+        self.ANARANJADO = (255, 136, 0)
+        self.GRIS = (33, 33, 33)
+        self.VERDE = (0, 200, 81)
+        self.AZUL = (0, 153, 204)
 
         self.puntaje = 0
 
@@ -27,7 +30,7 @@ class Juego:
         icono = pygame.image.load("imagenes/icon.png")
         pygame.display.set_icon(icono)
 
-        atacantes_x, atacantes_y = 20, 20
+        atacantes_x, atacantes_y = 20, 60
         for i in range(len(self.atacantes)):
             for j in range(len(self.atacantes[0])):
                 self.atacantes[i][j].pos["x"] = atacantes_x
@@ -47,14 +50,16 @@ class Juego:
         self.direccion_atacantes_x = 2
         self.direccion_atacantes_y = 0
 
-        self.disparos = []
+        self.disparos_defensor = []
+        self.disparos_atacantes = []
 
         # Crear surfaces de defensor y atacantes
         defensor = pygame.image.load("imagenes/defensor.png")
         self.defensor = pygame.transform.scale(defensor, (self.tamano_defensor, self.tamano_defensor))
         atacante = pygame.image.load("imagenes/atacante.png")
         self.atacante = pygame.transform.scale(atacante, (self.tamano_atacante, self.tamano_atacante))
-        self.fondo = pygame.image.load("animaciones/fondo2.gif")
+        fondo = pygame.image.load("animaciones/fondo2.gif")
+        self.fondo = pygame.transform.scale(fondo, (self.ancho, self.altura))
 
         self.defensor_x = self.ancho // 2 - self.tamano_defensor
         self.defensor_y = round(self.altura * (3 / 4))
@@ -72,28 +77,84 @@ class Juego:
         self.menu()
 
     def menu(self):
-        comenzar_juego = False
+        ir_config = False
         salir_juego = False
-        text = pygame.font.SysFont("Roboto", 40)
-        bienvenida = text.render("Bienvenido a Space Invaders!", True, self.NEGRO)
-        while not comenzar_juego and not salir_juego:
+        texto_bienvenida = pygame.font.SysFont("Roboto", 90)
+        texto_comenzar = pygame.font.SysFont("Roboto", 50)
+        bienvenida = texto_bienvenida.render("¡Bienvenido a Space Invaders!", True, self.VERDE)
+        comenzar = texto_comenzar.render("Oprima cualquier tecla / botón para comenzar", True, self.AZUL)
+
+        fondo = pygame.image.load("imagenes/fondo2.png")
+        fondo = pygame.transform.scale(fondo, (self.ancho, self.altura))
+
+        while not ir_config and not salir_juego:
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     salir_juego = True
                 if event.type == pygame.JOYBUTTONDOWN:
-                    comenzar_juego = True
+                    ir_config = True
                 if event.type == pygame.KEYDOWN:
-                    if event.key == pygame.K_SPACE:
-                        comenzar_juego = True
-                if event.type == pygame.MOUSEBUTTONDOWN:
-                    comenzar_juego = True
-                    break
-            self.ventana.fill(self.BLANCO)
-            self.ventana.blit(bienvenida, (self.ancho // 2, self.altura // 2))
+                    ir_config = True
+            self.ventana.fill(self.GRIS)
+            self.ventana.blit(fondo, (0, 0))
+            self.ventana.blit(bienvenida, (150, self.altura // 2 - 150))
+            self.ventana.blit(comenzar, (200, self.altura // 2))
             pygame.display.update()
             self.reloj.tick(self.FPS)
+        if ir_config:
+            self.config()
+        else:
+            pygame.quit()
+
+    def config(self):
+        comenzar_juego = False
+        salir_juego = False
+
+        fondo = pygame.image.load("imagenes/fondo2.png")
+        fondo = pygame.transform.scale(fondo, (self.ancho, self.altura))
+
+        seleccionar = pygame.font.SysFont("Roboto", 40)
+        seleccionar = seleccionar.render("Seleccione nombre de jugador", True, self.AZUL)
+        crear = pygame.font.SysFont("Roboto", 20)
+        crear = crear.render("Si el jugador ya existe, será cargado automáticamente", True, self.ROJO)
+
+        while not comenzar_juego and not salir_juego:
+            for event in pygame.event.get():
+                if event.type == pygame.QUIT:
+                    salir_juego = True
+
+            self.ventana.fill(self.GRIS)
+            self.ventana.blit(fondo, (0, 0))
+            self.ventana.blit(seleccionar, (375, 200))
+            self.ventana.blit(crear, (400, 240))
+            pygame.display.update()
+            self.reloj.tick(self.FPS)
+
         if comenzar_juego:
-            self.principal()
+            pass
+        else:
+            pygame.quit()
+
+    def juego_terminado(self):
+        ir_menu = False
+        salir_juego = False
+        texto1 = pygame.font.SysFont("Roboto", 100)
+        texto2 = pygame.font.SysFont("Roboto", 50)
+        final = texto1.render("¡Partida Terminada!", True, self.AZUL)
+        puntaje_partida = texto2.render("Puntaje final: {}".format(self.puntaje), True, self.VERDE)
+        while not ir_menu and not salir_juego:
+            for event in pygame.event.get():
+                if event.type == pygame.QUIT:
+                    salir_juego = True
+                if event.type == pygame.KEYDOWN:
+                    ir_menu = True
+            self.ventana.fill(self.GRIS)
+            self.ventana.blit(final, (250, 250))
+            self.ventana.blit(puntaje_partida, (450, 350))
+            pygame.display.update()
+            self.reloj.tick(self.FPS)
+        if ir_menu:
+            pass
         else:
             pygame.quit()
 
@@ -101,12 +162,18 @@ class Juego:
         """
         Loop principal del juego
         """
+        pygame.mixer.init()
+        texto = pygame.font.SysFont("Roboto", 25)
         # Determina si el jugador a perdido la partida
         juego_terminado = False
         # Determina si se debe salir del juego por completo
         salir_juego = False
 
         while not juego_terminado and not salir_juego:
+            puntaje = texto.render("Puntaje: {}".format(self.puntaje), True, self.BLANCO)
+            # Variable creada para determinar si una nave dada debe disparar en un cuadro particular
+            atacante_dispara = self.controlador.get_random_senal()
+
             # Devuelve todos los eventos que ocurran
             for event in pygame.event.get():
                 # Sale de juego
@@ -127,10 +194,17 @@ class Juego:
                     elif self.flecha_pres() == (-1, -1):
                         self.defensor_x_cambio = -5
                         self.defensor_y_cambio = 5
+                    elif self.flecha_pres() == (1, -1):
+                        self.defensor_x_cambio = 5
+                        self.defensor_y_cambio = 5
+                    elif self.flecha_pres() == (-1, 1):
+                        self.defensor_x_cambio = -5
+                        self.defensor_y_cambio = -5
                     elif self.flecha_pres() == (0, 0):
                         self.defensor_x_cambio = 0
                         self.defensor_y_cambio = 0
                     elif self.flecha_pres() == (0, -1):
+                        self.defensor_x_cambio = 0
                         self.defensor_y_cambio = 5
                     elif self.flecha_pres() == (0, 1):
                         self.defensor_x_cambio = 0
@@ -144,6 +218,9 @@ class Juego:
 
                 # Acciones en caso de presionar tecla
                 if event.type == pygame.KEYDOWN:
+
+                    if event.key == pygame.K_q:
+                        juego_terminado = True
 
                     # Entra en modo de pantalla completa al presionar "k"
                     if event.key == pygame.K_f:
@@ -195,36 +272,49 @@ class Juego:
 
             self.ventana.fill(self.NEGRO)
             self.ventana.blit(self.fondo, [0, 0])
+            self.ventana.blit(puntaje, (20, 20))
 
             # Dibuja defensor
             self.ventana.blit(self.defensor, (self.defensor_x, self.defensor_y))
 
-            # Dibuja todos los disparos en self.disparos
-            for pew in self.disparos:
+            # Dibuja todos los disparos en self.disparos_defensor
+            for pew in self.disparos_defensor:
                 if pew["y"] > 0:
                     pew["y"] -= 8
                     pygame.draw.rect(self.ventana, self.ROJO,
                                      [pew["x"], pew["y"], self.tamano_disparo_x, self.tamano_disparo_y])
                 else:
-                    self.disparos.remove(pew)
+                    self.disparos_defensor.remove(pew)
+
+            # Dibuja todos los disparos en self.disparos_atacantes
+            for pew in self.disparos_atacantes:
+                if pew["y"] < self.altura:
+                    pew["y"] += 8
+                    pygame.draw.rect(self.ventana, self.ANARANJADO,
+                                     [pew["x"], pew["y"], self.tamano_disparo_x, self.tamano_disparo_y])
+                else:
+                    self.disparos_atacantes.remove(pew)
 
             # Ciclo para manejar acciones de atacanes dentro de matriz self.atacantes
             for fila in range(len(self.atacantes)):
                 for atacante in range(len(self.atacantes[0])):
-                    for pew in self.disparos:
+                    for pew in self.disparos_defensor:
                         # Determina si alguno de los disparos colisiona con un atacante
                         # De ser así, el atacante muere y se suman 100 puntos
                         if self.colision(range(pew["x"], pew["x"] + self.tamano_disparo_x),
                             range(pew["y"], pew["y"] + self.tamano_disparo_y),
-                            range(self.atacantes[fila][atacante].pos["x"],
-                                  self.atacantes[fila][atacante].pos["x"] + self.tamano_atacante),
-                            range(self.atacantes[fila][atacante].pos["y"],
-                                  self.atacantes[fila][atacante].pos["y"] + self.tamano_atacante))\
+                            range(round(self.atacantes[fila][atacante].pos["x"]),
+                                  round(self.atacantes[fila][atacante].pos["x"] + self.tamano_atacante)),
+                            range(self.atacantes[fila][atacante].pos["y"] + self.direccion_atacantes_y,
+                                  self.atacantes[fila][atacante].pos["y"] + self.tamano_atacante +
+                                          self.direccion_atacantes_y))\
                                 and self.atacantes[fila][atacante].vida:
 
-                            self.disparos.remove(pew)
+                            self.disparos_defensor.remove(pew)
                             self.atacantes[fila][atacante].vida = False
                             self.puntaje += 100
+                            pygame.mixer.music.load("audio/invaderkilled.wav")
+                            pygame.mixer.music.play()
 
                     # De tener vida el atacante, lo mueve
                     if self.atacantes[fila][atacante].vida:
@@ -233,39 +323,47 @@ class Juego:
                                                           self.atacantes[fila][atacante].pos["y"] +
                                                           self.direccion_atacantes_y))
 
+                        if self.atacantes[fila][atacante].senal_disparo == atacante_dispara:
+                            self.disparos_atacantes.append({"x": self.atacantes[fila][atacante].pos["x"] +
+                                                                 self.tamano_atacante//2,
+                                                           "y": self.atacantes[fila][atacante].pos["y"] +
+                                                                self.direccion_atacantes_y + self.tamano_disparo_y})
+
                 # Determina la próxima dirección de los atacantes
                 se_paso = False
                 for fila in range(len(self.atacantes)):
                     for columna in range(len(self.atacantes)):
-                        # Determina si un atacante tiene via y se paso del ancho del area de pantalla
+                        # Determina si un atacante tiene vida y se paso del ancho del area de pantalla
                         # En caso de ser así, invierte la dirección en x, aumenta y, y aumenta la velocidad
-                        if self.atacantes[columna][len(self.atacantes[0]) - 1 - fila].vida \
-                                and self.atacantes[columna][len(self.atacantes[0]) - 1 - fila].pos["x"] \
+                        if self.atacantes[columna][fila].vida and \
+                                self.atacantes[columna][fila].pos["x"] <= 0:
+                            self.direccion_atacantes_x = self.velocidad_atacantes
+                            se_paso = True
+                        elif self.atacantes[columna][len(self.atacantes[0]) - 1 - fila].vida and \
+                                self.atacantes[columna][len(self.atacantes[0]) - 1 - fila].pos["x"] \
                                     >= self.ancho - self.tamano_atacante:
-                            self.velocidad_atacantes += 1
+                            self.velocidad_atacantes += .3
                             self.direccion_atacantes_x = -self.velocidad_atacantes
-                            self.direccion_atacantes_y += 25
+                            self.direccion_atacantes_y += 10
                             se_paso = True
                         if se_paso:
                             break
-                if self.atacantes[0][0].pos["x"] <= 0:
-                    self.direccion_atacantes_x = self.velocidad_atacantes
-                if se_paso:
-                    break
+                    if se_paso:
+                        break
 
             pygame.display.update()
             # Cuadros por segundo del juego
             self.reloj.tick(self.FPS)
         if juego_terminado:
-            self.menu()
+            self.juego_terminado()
         elif salir_juego:
             pygame.quit()
 
     def disparar(self):
         """
-        Añade un disparo a self.disparos
+        Añade un disparo a self.disparos_defensor
         """
-        self.disparos.append({"x": self.defensor_x + 25,
+        self.disparos_defensor.append({"x": self.defensor_x + 25,
                               "y": self.defensor_y - 20})
 
     def colision(self, rangex1, rangey1, rangex2, rangey2):

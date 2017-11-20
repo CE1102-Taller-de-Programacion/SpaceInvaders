@@ -1,6 +1,7 @@
 import vista as vi
 import modelo as md
 import threading
+import random
 
 archivo = None
 try:
@@ -50,6 +51,20 @@ class Controlador:
                 result += [[]]
                 result[j] += [Atacante(100)]
         return result
+
+    def crear_jugador(self):
+        pass
+
+    def get_jugadores(self):
+        for jugador in md.get_jugadores():
+            yield jugador
+
+    def get_puntajes(self):
+        for puntaje in md.get_puntajes():
+            yield puntaje
+
+    def get_random_senal(self):
+        return random.randint(0, 500)
 
 
 class Jugador:
@@ -136,6 +151,7 @@ class Atacante(Nave):
             self.estado = "activo"
         else:
             self.estado = estado
+        self.senal_disparo = random.randint(0, 500)
 
     def get_estado(self):
         return self.estado
