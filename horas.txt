@@ -3,3 +3,7 @@ Horas de investigación
  - Aprender pygame: 5 hora -WIP-
  - Investigación MVC: 1 hora
  - Diseño de objetos: 4 horas
+ - Manejo de archivos: 4 horas
+ - Creación de menu: 6 horas
+ - Manejo de matriz de atacantes: 6 horas
+ -

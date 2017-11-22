@@ -1,7 +1,1 @@
-{
-  "James": {"pos": 1, "puntaje": 100},
-  "Franchella": {"pos": 2, "puntaje":90},
-  "Carlos": {"pos": 3, "puntaje": 87},
-  "Sarah": {"pos": 4, "puntaje": 80},
-  "Leroy Jenkins": {"pos": 5, "puntaje": 74}
-}
+{"David": {"pos": 1, "puntaje": 28700}, "Mario": {"pos": 2, "puntaje": 11300}, "Joshua": {"pos": 3, "puntaje": 7000}, "Barbara": {"pos": 4, "puntaje": 6800}, "James": {"pos": 5, "puntaje": 6700}, "Leroy Jenkins": {"pos": 6, "puntaje": 6600}, "Sarah": {"pos": 7, "puntaje": 4500}, "Carlos": {"pos": 8, "puntaje": 4500}, "David\\": {"pos": 9, "puntaje": 1900}, "Franchella": {"pos": 10, "puntaje": 1400}, "Anibal": {"pos": 11, "puntaje": 100}}

@@ -33,7 +33,7 @@ class Controlador:
         """
         Genera una instancia de vista, donde se encuentra el juego.
         """
-        self.vista(self, Defensor(100), self.atacantes)
+        self.vista(self, Defensor(), self.atacantes)
 
     def generar_atacantes(self):
         """
@@ -56,15 +56,25 @@ class Controlador:
         pass
 
     def get_jugadores(self):
-        for jugador in md.get_jugadores():
-            yield jugador
+        return md.get_jugadores()
 
     def get_puntajes(self):
         for puntaje in md.get_puntajes():
             yield puntaje
 
-    def get_random_senal(self):
-        return random.randint(0, 500)
+    def get_random_senal(self, alto):
+        if alto < 200:
+            alto = 200
+        return random.randint(0, alto)
+
+    def generar_jugador(self, nombre, record=None):
+        return Jugador(nombre, record)
+
+    def guardar_nuevo(self, jugador):
+        md.insertar_puntaje_nuevo(jugador)
+
+    def guardar_existante(self, jugador):
+        md.actaulizar_puntaje(jugador)
 
 
 class Jugador:
@@ -77,16 +87,12 @@ class Jugador:
     def __exit__(self, exc_type, exc_val, exc_tb):
         self.guardar_record()
 
-    def __init__(self, nombre):
+    def __init__(self, nombre, record=None):
         self.nombre = nombre
-        self.record = 0
-        self.puntaje_actual = 0
-
-    def get_puntaje_actual(self):
-        return self.puntaje_actual
-
-    def set_puntaje_actual(self, _puntos):
-        self.puntaje_actual += _puntos
+        if record:
+            self.record = record
+        else:
+            self.record = 0
 
     def get_record(self):
         return self.record
@@ -121,48 +127,31 @@ def record_top5(jugador):
 
 
 class Nave:
-    def __init__(self, municiones):
-        self.municiones = municiones
+    def __init__(self):
         self.pos = {"x": 0, "y": 0}
         self.vida = True
-
-    def get_municiones(self):
-        return self.municiones
 
     def morir(self):
         if self.vida:
             self.vida = False
 
-    def disparar(self):
-        """"
-        :Requerimientos: self.vida debe ser verdadero y tener por lo menos una munición
-        """
-        result = False
-        if self.vida and self.municiones > 0:
-            self.municiones -= 1
-            result = True
-        return result
-
 
 class Atacante(Nave):
-    def __init__(self, municiones, estado=None):
-        super().__init__(municiones)
+    def __init__(self, estado=None):
+        super().__init__()
         if not estado:
             self.estado = "activo"
         else:
             self.estado = estado
-        self.senal_disparo = random.randint(0, 500)
-
-    def get_estado(self):
-        return self.estado
+        self.senal_disparo = random.randint(0, 200)
 
     def desprender(self):
         pass
 
 
 class Defensor(Nave):
-    def __init__(self, municiones):
-        super().__init__(municiones)
+    def __init__(self):
+        super().__init__()
 
 
 if __name__ == "__main__":
