@@ -4,8 +4,7 @@ import csv
 
 def get_jugadores():
     """
-    :yield: Nombre de jugador
-    Función iterable, en cada ciclo devuelve el nombre de un jugador
+    :return: Lista con nombres de jugadores
     """
     with open("jugadores.csv", "r", newline="") as f:
         file = csv.reader(f)
@@ -14,6 +13,10 @@ def get_jugadores():
 
 
 def get_puntajes():
+    """
+    :yield: tupla con nombre de jugador y su puntaje.
+    Función iterable, en cada ciclo devuelve la tupla de un jugador particular
+    """
     with open("puntajes.json",  "r") as f:
         puntajes = json.load(fp=f)
     for key in puntajes:
@@ -21,6 +24,10 @@ def get_puntajes():
 
 
 def actaulizar_puntaje(jugador):
+    """
+    :param jugador: diccionario con nombre de jugador y su puntaje.
+    Actualiza el record de un jugador ya existente guardado en puntajes.json.
+    """
     with open("puntajes.json", "r") as f:
         temp = json.load(fp=f)
     for i in temp:
@@ -50,6 +57,10 @@ def actaulizar_puntaje(jugador):
 
 
 def insertar_puntaje_nuevo(jugador):
+    """
+    :param jugador: diccionario con nombre de jugador y su puntaje.
+    General un nuevo jugador, de manera que se inserta en jugadores.csv y puntajes.json.
+    """
     with open("jugadores.csv", "r", newline="") as f:
         temp = csv.reader(f)
         temp = next(temp)
@@ -81,4 +92,3 @@ def insertar_puntaje_nuevo(jugador):
         pos += 1
     with open("puntajes.json", "w") as f:
         json.dump(obj=result, fp=f)
-

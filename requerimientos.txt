@@ -1,6 +1,3 @@
 - Varios sonidos
-- Sprites
 - Animaciones
-- Fondo
 - Adaptar UML
-- Reaccionar segun posición de sprites y su rol
