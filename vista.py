@@ -82,6 +82,7 @@ class Juego:
         self.velocidad_atacantes_x = 2
         self.velocidad_atacantes_x_cambio = 2
         self.velocidad_atacantes_y_cambio = 0
+        self.aumento_velocidad_atacante = 0
 
         # Listas que contienen objetos disparo para mostrar en ventana
         self.disparos_defensor = []
@@ -354,8 +355,8 @@ class Juego:
 
         while not juego_terminado and not salir_juego:
             # Variables que mantienen cuenta de los datos de la partida actual.
-            nombre = texto.render("Puntaje: {}".format(self.jugador.nombre), True, self.BLANCO)
-            puntaje = texto.render("Jugador: {}".format(self.puntaje), True, self.BLANCO)
+            nombre = texto.render("Jugador: {}".format(self.jugador.nombre), True, self.BLANCO)
+            puntaje = texto.render("Puntaje: {}".format(self.puntaje), True, self.BLANCO)
 
             # Variable creada para determinar si una nave dada debe disparar en un cuadro particular
             atacante_dispara = self.controlador.get_random_senal(self.alto)
@@ -379,10 +380,10 @@ class Juego:
                         self.defensor_y_cambio = -5
                     elif self.flecha_pres() == (-1, -1):
                         self.defensor_x_cambio = -5
-                        self.defensor_y_cambio = 9
+                        self.defensor_y_cambio = 8
                     elif self.flecha_pres() == (1, -1):
                         self.defensor_x_cambio = 5
-                        self.defensor_y_cambio = 9
+                        self.defensor_y_cambio = 8
                     elif self.flecha_pres() == (-1, 1):
                         self.defensor_x_cambio = -5
                         self.defensor_y_cambio = -5
@@ -391,7 +392,7 @@ class Juego:
                         self.defensor_y_cambio = 0
                     elif self.flecha_pres() == (0, -1):
                         self.defensor_x_cambio = 0
-                        self.defensor_y_cambio = 9
+                        self.defensor_y_cambio = 8
                     elif self.flecha_pres() == (0, 1):
                         self.defensor_x_cambio = 0
                         self.defensor_y_cambio = -5
@@ -561,8 +562,9 @@ class Juego:
 
             # Al morir o desaparecer todos los atacantes, los vuelve a generar.
             if not hay_vida:
-                self.velocidad_atacantes_x = 2
-                self.velocidad_atacantes_x_cambio = 2
+                self.aumento_velocidad_atacante += 2
+                self.velocidad_atacantes_x = 2 + self.aumento_velocidad_atacante
+                self.velocidad_atacantes_x_cambio = 2 + self.aumento_velocidad_atacante
                 self.velocidad_atacantes_y_cambio = 0
                 self.alto = 500
                 atacantes_x, atacantes_y = 20, 60
